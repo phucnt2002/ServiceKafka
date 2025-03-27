@@ -1,0 +1,90 @@
+Partition: many replicas
+    1 Leader
+    many follower
+
+When a new message arrives:
+    Producer sends message "Hello" to the Leader
+    Leader writes "Hello" as message #1 in its log
+    Leader waits for Followers to copy this message
+
+
+The copying process:
+    Follower 1 checks with Leader: "What's new?"
+    Leader says: "Here's message #1: Hello"
+    Follower 1 copies "Hello" into its log
+    Follower 1 tells Leader: "I now have message #1"
+    This same process happens with other Followers
+
+
+Staying in sync:
+    Leader keeps a list called "ISR" (In-Sync Replicas)
+    If a Follower falls too far behind, it's removed from this list
+    Only Followers who are keeping up can become the new Leader if needed
+
+Kafka Producers:
+Once a topic has been created with Kafka, the next step is to send data into the topic. This is where Kafka Producers come in.
+Each event message contains an optional key and a value.
+
+Kafka Consumers
+Once a topic has been created in Kafka and data has been placed in the topic, we can start to build applications that make use of this data stream.
+Applications that pull event data from one or more Kafka topics are known as Kafka Consumers.
+
+Sequential Reading:
+
+Consumers always read data in offset order (from lower to higher).
+Reading data backward is not possible due to Kafka's implementation.
+Message Order:
+
+Within a Partition: Message order is guaranteed.
+Across Partitions: Message order is not guaranteed if consuming from multiple partitions simultaneously.
+Default Behavior:
+
+Consumers only read newly produced data by default when they first connect.
+To consume historical data, explicit configuration is required.
+Pull Model:
+
+Consumers use a pull model, requesting data from brokers.
+This design allows consumers to control the rate of consumption.
+
+
+
+
+
+Kafka Consumer Groups & Offsets
+    It is important to note that each topic partition is only assigned to one consumer within a consumer group, but a consumer from a consumer group can be assigned multiple partitions.
+    Each of your applications (that may be composed of many consumers) reading from Kafka topics must specify a different group.id. That means that multiple applications (consumer groups) can consume from the same topic at the same time:
+
+=> ONE partition ONLY be assigned with ONE Consumer in Consumer Group
+=> ONE Consumer in Consumer Group can consume MANY Partition within ONE Topic
+=> ONE Partition CAN be assigned with ONE Consumer in MANY Consumer GROUP
+
+
+Kafka Consumer Offsets
+
+Kafka Brokers
+
+Kafka Topic Replication
+    Kafka Replication
+    Data Replication helps prevent data loss by writing the same data to more than one broker
+    ince Apache Kafka 2.4, it is possible to configure consumers to read from in-sync replicas instead (usually the closest).
+
+
+
+
+Zookeeper with Kafka
+Zookeeper is used for metadata management in the Kafka world. For example:
+
+    Zookeeper keeps track of which brokers are part of the Kafka cluster
+
+    Zookeeper is used by Kafka brokers to determine which broker is the leader of a given partition and topic and perform leader elections
+
+    Zookeeper stores configurations for topics and permissions
+
+    Zookeeper sends notifications to Kafka in case of changes (e.g. new topic, broker dies, broker comes up, delete topics, etc.…)
+
+Kafka KRaft Mode
+
+
+
+
+
